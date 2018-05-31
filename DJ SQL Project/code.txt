@@ -1,0 +1,110 @@
+
+Project Code
+
+1)
+
+SELECT DISTINCT page_name
+FROM page_visits;
+
+2)
+
+   WITH last_touch AS (
+      SELECT user_id, MAX(timestamp) as last_touch_at
+   FROM page_visits
+   GROUP BY user_id)
+
+SELECT utm_campaign, COUNT(last_touch_at)
+FROM page_visits
+Join last_touch
+       ON page_visits.user_id = last_touch.user_id
+GROUP BY utm_campaign;
+
+3)
+
+WITH PtwoAS (
+•SELECT utm_campaign, COUNT(*) as P2
+•FROM page_visits
+•WHERE page_name= ‘2 –shopping_cart’
+•GROUP BY utm_campaign)
+•SELECT utm_campaign,  P2
+•FROM Ptwo
+•GROUP BY utm_campaign;
+
+
+
+4
+
+WITH Pone AS (
+SELECT utm_campaign, COUNT(*) as P1
+FROM page_visits
+WHERE page_name = '1 - landing_page'
+GROUP BY utm_campaign)
+
+, Ptwo AS (
+   SELECT utm_campaign, COUNT(*) as P2
+FROM page_visits
+WHERE page_name = '2 - shopping_cart'
+GROUP BY utm_campaign)
+  
+ , Pthree AS (
+   SELECT utm_campaign, COUNT(*) as P3
+FROM page_visits
+WHERE page_name = '3 - checkout'
+GROUP BY utm_campaign)
+   
+  , Pfour AS (
+   SELECT utm_campaign, COUNT(*) as P4
+FROM page_visits
+WHERE page_name = '4 - purchase'
+GROUP BY utm_campaign)
+
+4)
+
+SELECT Pone.utm_campaign, P1, P2, P3, P4
+FROM Pone
+JOIN Ptwo 		 ON Pone.utm_campaign = Ptwo.utm_campaign
+JOIN Pthree		 ON Pone.utm_campaign = Pthree.utm_campaign
+JOIN Pfour		 ON Pone.utm_campaign = Pfour.utm_campaign;
+GROUP BY utm_campaign;
+
+5)
+
+
+SELECT *
+•FROM page_visits
+•WHERE user_id= 11635;
+
+6
+
+WITH buyers AS (
+  SELECT utm_campaign, user_id
+FROM page_visits
+WHERE page_name = '4 - purchase'
+ )
+  
+  SELECT page_visits.utm_campaign, COUNT(*)
+  FROM buyers
+  JOIN page_visits
+  ON buyers.user_id = page_visits.user_id
+  GROUP BY page_visits.utm_campaign;
+
+7
+
+  WITH buyers AS (
+  SELECT utm_campaign as LC, user_id
+FROM page_visits
+WHERE page_name = '4 - purchase'
+ )
+,
+lookers AS (
+  SELECT utm_campaign as FC, user_id
+FROM page_visits
+WHERE page_name = '1 - landing_page'
+ )
+    
+  SELECT LC, FC, COUNT(*)
+  FROM buyers
+  JOIN lookers
+  ON buyers.user_id = lookers.user_id
+  GROUP BY LC;
+  
